@@ -1,0 +1,25 @@
+<div id="compass">
+  <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="40" r="38" fill="rgba(0,15,35,0.88)" stroke="rgba(0,245,255,0.2)" stroke-width="1"/>
+    <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(0,245,255,0.07)" stroke-width="0.5" stroke-dasharray="2,4"/>
+    <text x="40" y="11" text-anchor="middle" fill="#00f5ff" font-size="9" font-family="Orbitron,sans-serif" font-weight="700">N</text>
+    <text x="40" y="74" text-anchor="middle" fill="rgba(0,245,255,0.35)" font-size="9">S</text>
+    <text x="72" y="44" text-anchor="middle" fill="rgba(0,245,255,0.35)" font-size="9">E</text>
+    <text x="8" y="44" text-anchor="middle" fill="rgba(0,245,255,0.35)" font-size="9">W</text>
+    <g id="compass-needle" transform="rotate(0,40,40)">
+      <polygon points="40,10 43,40 40,50 37,40" fill="#ff3d3d"/>
+      <polygon points="40,50 43,40 40,70 37,40" fill="rgba(0,245,255,0.35)"/>
+    </g>
+    <circle cx="40" cy="40" r="3" fill="var(--cyan)"/>
+  </svg>
+</div>
+
+<div id="minimap">
+  <div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div>
+  <canvas id="radar-canvas" width="80" height="80"></canvas>
+</div>
+
+<div id="storm-alert">⚠ BADAI ⚠</div>
+<div id="crosshair"></div>
+<div id="bottom-info">DRAG = KAMERA &nbsp;|&nbsp; SCROLL = ZOOM &nbsp;|&nbsp; 1/2/3 = ANGIN &nbsp;|&nbsp; Q/W/E = OMBAK &nbsp;|&nbsp; D/N/K = WAKTU &nbsp;|&nbsp; B/S/T = KAMERA</div>
+<canvas id="wave-indicator" width="80" height="40"></canvas>

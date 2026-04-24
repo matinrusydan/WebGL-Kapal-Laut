@@ -1,0 +1,52 @@
+<button id="panel-toggle">◀ HIDE</button>
+
+<div class="panel" id="panel-controls">
+  <div style="display:flex;gap:24px;align-items:flex-start;">
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">🌬️ ANGIN</div>
+      <div class="btn-row">
+        <button class="ctrl-btn btn-wind" data-val="1"><span class="key">1</span> Lemah</button>
+        <button class="ctrl-btn btn-wind active" data-val="2"><span class="key">2</span> Sedang</button>
+        <button class="ctrl-btn btn-wind" data-val="3"><span class="key">3</span> Kuat</button>
+      </div>
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">🌊 OMBAK</div>
+      <div class="btn-row">
+        <button class="ctrl-btn btn-wave" data-val="1"><span class="key">Q</span> Kecil</button>
+        <button class="ctrl-btn btn-wave" data-val="2"><span class="key">W</span> Sedang</button>
+        <button class="ctrl-btn btn-wave active" data-val="3"><span class="key">E</span> Besar</button>
+      </div>
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">🌙 WAKTU</div>
+      <div class="btn-row">
+        <button class="ctrl-btn btn-tod" data-val="day"><span class="key">D</span> Siang</button>
+        <button class="ctrl-btn btn-tod active" data-val="night"><span class="key">N</span> Malam</button>
+        <button class="ctrl-btn btn-tod" data-val="dusk"><span class="key">K</span> Senja</button>
+      </div>
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">⚓ KAMERA</div>
+      <div class="btn-row">
+        <button class="ctrl-btn btn-cam" data-val="bridge"><span class="key">B</span> Bridge</button>
+        <button class="ctrl-btn btn-cam" data-val="side"><span class="key">S</span> Samping</button>
+        <button class="ctrl-btn btn-cam" data-val="top"><span class="key">T</span> Atas</button>
+      </div>
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">🤖 ASISTEN AI</div>
+      <div class="btn-row">
+        <button class="ctrl-btn" id="btn-ai-log" style="color:var(--gold); border-color:var(--gold);">✨ MINTA LOG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ai-panel">
+  <div class="ai-header">
+    <div class="ai-title">✨ LOG KAPTEN AI (GEMINI)</div>
+    <button class="ai-close" id="btn-ai-close">TUTUP</button>
+  </div>
+  <div id="ai-content">Siap membuat laporan log...</div>
+</div>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi Kapal Laut 3D — Multi-File Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Canvas 3D (WebGL Root) -->
+  <canvas id="webgl-canvas" style="position:fixed; top:0; left:0; z-index:1;"></canvas>
+  
+  <!-- Canvas 2D Overlay (Angin) -->
+  <canvas id="wind-canvas"></canvas>
+
+  <!-- Root untuk komponen UI yang diload via fetch() -->
+  <div id="ui-root"></div>
+
+  <!-- Entry Point JavaScript (ES Module) -->
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
