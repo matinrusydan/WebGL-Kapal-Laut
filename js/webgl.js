@@ -3,7 +3,8 @@ import { Math3D } from './math.js';
 
 export const WebGL = {
   gl: null, canvas: null,
-  programs: {}, meshes: { BOX: {}, CYL: {}, SPH: {}, TORUS: {} },
+  programs: {}, 
+  meshes: { BOX: {}, CYL: {}, SPH: {}, TORUS: {}, HULL: {} },
 
   init() {
     this.canvas = document.getElementById('webgl-canvas');
@@ -75,10 +76,49 @@ export const WebGL = {
     return {positions:new Float32Array(pos),normals:new Float32Array(nrm),uvs:new Float32Array(uv),indices:new Uint16Array(idx)};
   },
 
+  // BUILDER BARU: Custom Streamlined Hull
+  buildHull(w, h, d, bowL, sternL) {
+    const pos=[], nrm=[], uv=[], idx=[];
+    let vOffset = 0;
+    
+    const norm = (a) => { let l=Math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2])||1; return [a[0]/l, a[1]/l, a[2]/l]; };
+    const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+    const sub = (a, b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]];
+
+    function addFace(pts, explicitNormal=null) {
+      let n = explicitNormal;
+      if (!n) n = norm(cross(sub(pts[1], pts[0]), sub(pts[2], pts[0])));
+      pts.forEach((p, i) => { pos.push(...p); nrm.push(...n); uv.push(i%2, Math.floor(i/2)%2); });
+      for(let i=1; i<pts.length-1; i++) { idx.push(vOffset, vOffset+i, vOffset+i+1); }
+      vOffset += pts.length;
+    }
+
+    const yT = h/2, yB = -h/2;
+    const xT = w/2, xB = w/2 * 0.75;
+    const zF = d/2, zB = -d/2;
+
+    const t0=[0,yT,zF+bowL], t1=[xT,yT,zF], t2=[xT,yT,zB], t3=[xT*0.7,yT,zB-sternL], t4=[-xT*0.7,yT,zB-sternL], t5=[-xT,yT,zB], t6=[-xT,yT,zF];
+    const b0=[0,yB,zF+bowL*0.8], b1=[xB,yB,zF*0.8], b2=[xB,yB,zB*0.8], b3=[xB*0.6,yB,zB-sternL*0.8], b4=[-xB*0.6,yB,zB-sternL*0.8], b5=[-xB,yB,zB*0.8], b6=[-xB,yB,zF*0.8];
+
+    addFace([t0, t1, t2, t3, t4, t5, t6], [0,1,0]);       // Top Deck
+    addFace([b0, b6, b5, b4, b3, b2, b1], [0,-1,0]);      // Bottom (CCW)
+    
+    addFace([t0, b0, b1, t1]); // Bow Right
+    addFace([t1, b1, b2, t2]); // Mid Right
+    addFace([t2, b2, b3, t3]); // Stern Right
+    addFace([t3, b3, b4, t4]); // Stern Back
+    addFace([t4, b4, b5, t5]); // Stern Left
+    addFace([t5, b5, b6, t6]); // Mid Left
+    addFace([t6, b6, b0, t0]); // Bow Left
+
+    return {positions:new Float32Array(pos), normals:new Float32Array(nrm), uvs:new Float32Array(uv), indices:new Uint16Array(idx)};
+  },
+
   getBox(w,h,d) { const k=`${w}_${h}_${d}`; if(!this.meshes.BOX[k]) this.meshes.BOX[k]=this.uploadMesh(this.buildBox(w,h,d)); return this.meshes.BOX[k]; },
   getCyl(rt,rb,h,s) { const k=`${rt}_${rb}_${h}_${s}`; if(!this.meshes.CYL[k]) this.meshes.CYL[k]=this.uploadMesh(this.buildCyl(rt,rb,h,s)); return this.meshes.CYL[k]; },
   getSph(r,s) { const k=`${r}_${s}`; if(!this.meshes.SPH[k]) this.meshes.SPH[k]=this.uploadMesh(this.buildSph(r,s)); return this.meshes.SPH[k]; },
   getTorus(R,r,s1,s2) { const k=`${R}_${r}_${s1}_${s2}`; if(!this.meshes.TORUS[k]) this.meshes.TORUS[k]=this.uploadMesh(this.buildTorus(R,r,s1,s2)); return this.meshes.TORUS[k]; },
+  getHull(w,h,d,bowL,sternL) { const k=`${w}_${h}_${d}_${bowL}_${sternL}`; if(!this.meshes.HULL[k]) this.meshes.HULL[k]=this.uploadMesh(this.buildHull(w,h,d,bowL,sternL)); return this.meshes.HULL[k]; },
 
   compileShaders() {
     this.programs.main = this.createProgram(
