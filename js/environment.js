@@ -37,19 +37,6 @@ export const Environment = {
     if(State.light.moonVisible) { const mp=[-120,160,-300]; WebGL.drawFlat(WebGL.getSph(6,16), Math3D.M4.translation(...mp), [1,0.992,0.91,1]); WebGL.drawFlat(WebGL.getSph(9,16), Math3D.M4.translation(...mp), [1,0.992,0.91,0.06]); }
   },
   drawDistant() {
-    const wv=Config.wave[State.waveLevel], wc=Config.wind[State.windLevel];
-    this.distShipData.forEach((ds,i)=>{
-      const h=Ocean.waveH(ds.x*0.5,ds.z*0.5,State.simTime,wv)*0.6+0.5, rz=Math.sin(State.simTime*0.9+i)*0.06*wc.tiltMult;
-      const m=(tx,ty,tz,rx,ry,rz2)=>{ let m=Math3D.M4.translation(ds.x,h,ds.z); m=Math3D.M4.multiply(m,Math3D.M4.rotationZ(rz)); m=Math3D.M4.multiply(m,Math3D.M4.scaling(ds.sc,ds.sc,ds.sc)); m=Math3D.M4.multiply(m,Math3D.M4.translation(tx,ty,tz)); if(rz2)m=Math3D.M4.multiply(m,Math3D.M4.rotationZ(rz2)); return m; };
-      WebGL.drawMesh(WebGL.programs.main,WebGL.getBox(4,2,12),m(0,0.8,0),Config.colors.hullMain,{shininess:30});
-      WebGL.drawMesh(WebGL.programs.main,WebGL.getBox(2.5,2.5,4),m(0,2.8,-1),[0.8,0.8,0.8],{shininess:20});
-    });
-    this.buoyData.forEach(b=>{
-      const h=Ocean.waveH(b.x,b.z,State.simTime,wv)+0.4, rz=Math.sin(State.simTime+b.phase)*0.35*wc.tiltMult;
-      const m=Math3D.M4.multiply(Math3D.M4.translation(b.x,h,b.z),Math3D.M4.rotationZ(rz));
-      WebGL.drawMesh(WebGL.programs.main,WebGL.getSph(0.7,12),m,b.col,{shininess:40,metalness:0.2});
-      WebGL.drawMesh(WebGL.programs.main,WebGL.getCyl(0.06,0.06,1.2,6),Math3D.M4.translation(b.x,h+0.7,b.z),[0.8,0.8,0.8],{shininess:20});
-      WebGL.drawFlat(WebGL.getSph(0.15,8),Math3D.M4.translation(b.x,h+1.5,b.z),[...b.col,0.9]);
-    });
+    // Lingkungan laut dikosongkan (objek debug/pelampung & kapal kejauhan dihapus)
   }
 };
