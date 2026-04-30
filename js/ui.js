@@ -1,7 +1,6 @@
 import { State } from './state.js';
 import { Config } from './config.js';
 import { WebGL } from './webgl.js';
-import { AI } from './ai.js';
 
 export const UI = {
   windCtx: null, rctx: null, wictx: null, windParticles: [], radarAngle: 0,
@@ -49,8 +48,6 @@ export const UI = {
       document.getElementById('panel-toggle').textContent = State.statusVisible ? '◀ HIDE' : '▶ SHOW'; 
     });
     
-    const btnAiLog = document.getElementById('btn-ai-log');
-    if (btnAiLog) btnAiLog.addEventListener('click', () => AI.generateLog());
     const btnAiClose = document.getElementById('btn-ai-close');
     if (btnAiClose) btnAiClose.addEventListener('click', () => document.getElementById('ai-panel').classList.remove('active'));
 
