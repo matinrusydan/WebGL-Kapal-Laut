@@ -5,9 +5,9 @@ export const Config = {
     3: {name:'KUAT',   speed:1.7,  tiltMult:1.9, bar:100, knots:28, vis:3,  particleCount:240, particleAlpha:0.75, particleSpeed:5.0 },
   },
   wave: {
-    1: {name:'KECIL',  amp:0.22, freq:0.65, chop:0.08, bar:25, color:[0.055,0.24,0.44] },
-    2: {name:'SEDANG', amp:0.72, freq:1.05, chop:0.25, bar:58, color:[0.028,0.14,0.32] },
-    3: {name:'BESAR',  amp:1.55, freq:1.7,  chop:0.55, bar:100,color:[0.01,0.06,0.20] },
+    1: {name:'KECIL',  amp:0.22, freq:0.65, chop:0.08, bar:25, color:[0.015,0.07,0.22] },
+    2: {name:'SEDANG', amp:0.72, freq:1.05, chop:0.25, bar:58, color:[0.015,0.07,0.22] },
+    3: {name:'BESAR',  amp:1.55, freq:1.7,  chop:0.55, bar:100,color:[0.015,0.07,0.22] },
   },
   colors: {
     hullMain:   [0.099,0.176,0.369], hullDark:   [0.051,0.118,0.251], hullBot: [0.478,0.082,0.082],
