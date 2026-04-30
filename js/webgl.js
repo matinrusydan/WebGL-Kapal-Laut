@@ -42,11 +42,13 @@ export const WebGL = {
     const b=this.gl.createBuffer(); this.gl.bindBuffer(type,b); this.gl.bufferData(type,data,usage); return b;
   },
   uploadMesh(geo) {
-    return {
+    const mesh = {
       pos: this.createBuffer(geo.positions), nrm: this.createBuffer(geo.normals),
-      uv:  this.createBuffer(geo.uvs), idx: this.createBuffer(geo.indices, this.gl.ELEMENT_ARRAY_BUFFER),
-      count: geo.indices.length
+      uv:  this.createBuffer(geo.uvs), count: geo.count || (geo.indices ? geo.indices.length : geo.positions.length/3)
     };
+    if (geo.indices) mesh.idx = this.createBuffer(geo.indices, this.gl.ELEMENT_ARRAY_BUFFER);
+    if (geo.tangents) mesh.tan = this.createBuffer(geo.tangents);
+    return mesh;
   },
 
   buildBox(w, h, d) {
@@ -122,8 +124,8 @@ export const WebGL = {
 
   compileShaders() {
     this.programs.main = this.createProgram(
-      `attribute vec3 aPosition; attribute vec3 aNormal; attribute vec2 aUV; uniform mat4 uProjection; uniform mat4 uView; uniform mat4 uModel; uniform mat3 uNormalMat; varying vec3 vNormal; varying vec3 vWorldPos; varying vec2 vUV; void main(){ vec4 wp=uModel*vec4(aPosition,1.0); vWorldPos=wp.xyz; vNormal=normalize(uNormalMat*aNormal); vUV=aUV; gl_Position=uProjection*uView*wp; }`,
-      `precision mediump float; uniform vec3 uColor; uniform vec3 uCamPos; uniform float uShininess; uniform float uMetalness; uniform float uOpacity; uniform vec3 uSunDir; uniform vec3 uSunColor; uniform float uSunIntensity; uniform vec3 uMoonDir; uniform vec3 uMoonColor; uniform float uMoonIntensity; uniform vec3 uAmbColor; uniform float uAmbIntensity; uniform float uFogDensity; uniform vec3 uFogColor; varying vec3 vNormal; varying vec3 vWorldPos; varying vec2 vUV; void main(){ vec3 N=normalize(vNormal), V=normalize(uCamPos-vWorldPos); vec3 ambient=uAmbColor*uAmbIntensity*uColor; vec3 L1=normalize(uSunDir); float diff1=max(dot(N,L1),0.0); vec3 R1=reflect(-L1,N); float spec1=pow(max(dot(V,R1),0.0),uShininess); vec3 sunC=uSunColor*uSunIntensity*(diff1*uColor+spec1*mix(vec3(1.0),uColor,uMetalness)*0.5); vec3 L2=normalize(uMoonDir); float diff2=max(dot(N,L2),0.0); vec3 moonC=uMoonColor*uMoonIntensity*diff2*uColor; vec3 col=ambient+sunC+moonC; float d=length(vWorldPos); float f=clamp(1.0-exp(-uFogDensity*uFogDensity*d*d),0.0,1.0); gl_FragColor=vec4(mix(col,uFogColor,f),uOpacity); }`
+      `attribute vec3 aPosition; attribute vec3 aNormal; attribute vec2 aUV; attribute vec3 aTangent; uniform mat4 uProjection; uniform mat4 uView; uniform mat4 uModel; uniform mat3 uNormalMat; varying vec3 vNormal; varying vec3 vWorldPos; varying vec2 vUV; varying mat3 vTBN; void main(){ vec4 wp=uModel*vec4(aPosition,1.0); vWorldPos=wp.xyz; vNormal=normalize(uNormalMat*aNormal); vUV=aUV; vec3 T=normalize(uNormalMat*aTangent); vec3 N=vNormal; T=normalize(T-dot(T,N)*N); vec3 B=cross(N,T); vTBN=mat3(T,B,N); gl_Position=uProjection*uView*wp; }`,
+      `precision mediump float; uniform vec3 uColor; uniform vec3 uCamPos; uniform float uShininess; uniform float uMetalness; uniform float uOpacity; uniform vec3 uSunDir; uniform vec3 uSunColor; uniform float uSunIntensity; uniform vec3 uMoonDir; uniform vec3 uMoonColor; uniform float uMoonIntensity; uniform vec3 uAmbColor; uniform float uAmbIntensity; uniform float uFogDensity; uniform vec3 uFogColor; uniform bool uUseTexture; uniform sampler2D uAlbedoMap; uniform bool uUseNormalMap; uniform sampler2D uNormalMap; varying vec3 vNormal; varying vec3 vWorldPos; varying vec2 vUV; varying mat3 vTBN; void main(){ vec4 baseC=vec4(uColor,uOpacity); if(uUseTexture){ baseC.rgb=texture2D(uAlbedoMap,vUV).rgb; } vec3 N=normalize(vNormal); if(uUseNormalMap){ vec3 nm=texture2D(uNormalMap,vUV).rgb; nm=normalize(nm*2.0-1.0); N=normalize(vTBN*nm); } vec3 V=normalize(uCamPos-vWorldPos); vec3 ambient=uAmbColor*uAmbIntensity*baseC.rgb; vec3 L1=normalize(uSunDir); float diff1=max(dot(N,L1),0.0); vec3 R1=reflect(-L1,N); float spec1=pow(max(dot(V,R1),0.0),uShininess); vec3 sunC=uSunColor*uSunIntensity*(diff1*baseC.rgb+spec1*mix(vec3(1.0),baseC.rgb,uMetalness)*0.5); vec3 L2=normalize(uMoonDir); float diff2=max(dot(N,L2),0.0); vec3 moonC=uMoonColor*uMoonIntensity*diff2*baseC.rgb; vec3 col=ambient+sunC+moonC; float d=length(vWorldPos); float f=clamp(1.0-exp(-uFogDensity*uFogDensity*d*d),0.0,1.0); gl_FragColor=vec4(mix(col,uFogColor,f),baseC.a); }`
     );
     this.programs.flat = this.createProgram(
       `attribute vec3 aPosition; uniform mat4 uProjection; uniform mat4 uView; uniform mat4 uModel; void main(){ gl_Position=uProjection*uView*uModel*vec4(aPosition,1.0); }`,
@@ -148,12 +150,29 @@ export const WebGL = {
     this.gl.uniformMatrix3fv(u('uNormalMat'),false,Math3D.M4.normalMatrix(modelMat));
     this.gl.uniform3fv(u('uColor'),color); this.gl.uniform3fv(u('uCamPos'),State.camera.pos);
     this.gl.uniform1f(u('uShininess'),opts.shininess||32); this.gl.uniform1f(u('uMetalness'),opts.metalness||0); this.gl.uniform1f(u('uOpacity'),opts.opacity||1);
+    
+    this.gl.uniform1i(u('uUseTexture'), opts.albedoMap ? 1 : 0);
+    if(opts.albedoMap){ this.gl.activeTexture(this.gl.TEXTURE0); this.gl.bindTexture(this.gl.TEXTURE_2D, opts.albedoMap); this.gl.uniform1i(u('uAlbedoMap'),0); }
+    this.gl.uniform1i(u('uUseNormalMap'), opts.normalMap ? 1 : 0);
+    if(opts.normalMap){ this.gl.activeTexture(this.gl.TEXTURE1); this.gl.bindTexture(this.gl.TEXTURE_2D, opts.normalMap); this.gl.uniform1i(u('uNormalMap'),1); }
+
     this.setLightUniforms(prog);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, mesh.pos); const pa=a('aPosition'); this.gl.enableVertexAttribArray(pa); this.gl.vertexAttribPointer(pa,3,this.gl.FLOAT,false,0,0);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, mesh.nrm); const na=a('aNormal'); this.gl.enableVertexAttribArray(na); this.gl.vertexAttribPointer(na,3,this.gl.FLOAT,false,0,0);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, mesh.uv); const ua=a('aUV'); if(ua>=0){this.gl.enableVertexAttribArray(ua); this.gl.vertexAttribPointer(ua,2,this.gl.FLOAT,false,0,0);}
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, mesh.idx);
-    this.gl.drawElements(this.gl.TRIANGLES, mesh.count, this.gl.UNSIGNED_SHORT, 0);
+    
+    const ta=a('aTangent');
+    if(ta>=0){
+      if(mesh.tan){ this.gl.bindBuffer(this.gl.ARRAY_BUFFER, mesh.tan); this.gl.enableVertexAttribArray(ta); this.gl.vertexAttribPointer(ta,3,this.gl.FLOAT,false,0,0); }
+      else { this.gl.disableVertexAttribArray(ta); }
+    }
+
+    if(mesh.idx){
+      this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, mesh.idx);
+      this.gl.drawElements(this.gl.TRIANGLES, mesh.count, this.gl.UNSIGNED_SHORT, 0);
+    } else {
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, mesh.count);
+    }
   },
   
   drawFlat(mesh, modelMat, color) {

@@ -41,7 +41,7 @@ const App = {
 
   applyTOD() {
     const l = State.light;
-    if(State.timeOfDay==='day'){ l.skyTopColor=[0.102,0.29,0.541]; l.skyBotColor=[0.333,0.6,0.8]; l.sunVisible=true; l.moonVisible=false; l.starsVisible=false; l.ambColor=[0.227,0.353,0.541]; l.ambIntensity=1.4; l.sunIntensity=2.5; l.sunColor=[1,0.96,0.88]; l.moonIntensity=0.2; l.fogColor=[0.4,0.6,0.8]; l.fogDensity=0.002; }
+    if(State.timeOfDay==='day'){ l.skyTopColor=[0.102,0.29,0.541]; l.skyBotColor=[0.333,0.6,0.8]; l.sunVisible=true; l.moonVisible=false; l.starsVisible=false; l.ambColor=[0.05, 0.15, 0.35]; l.ambIntensity=1.4; l.sunIntensity=2.5; l.sunColor=[1,0.96,0.88]; l.moonIntensity=0.2; l.fogColor=[0.4,0.6,0.8]; l.fogDensity=0.002; }
     else if(State.timeOfDay==='night'){ l.skyTopColor=[0,0.032,0.125]; l.skyBotColor=[0,0.102,0.227]; l.sunVisible=false; l.moonVisible=true; l.starsVisible=true; l.ambColor=[0.04,0.094,0.188]; l.ambIntensity=0.9; l.sunIntensity=0.3; l.sunColor=[0.376,0.502,0.733]; l.moonIntensity=0.9; l.fogColor=[0,0.047,0.102]; l.fogDensity=0.003; }
     else { l.skyTopColor=[0.04,0.083,0.251]; l.skyBotColor=[0.541,0.188,0.063]; l.sunVisible=true; l.moonVisible=false; l.starsVisible=false; l.ambColor=[0.427,0.165,0.102]; l.ambIntensity=1.1; l.sunIntensity=1.4; l.sunColor=[1,0.533,0.267]; l.moonIntensity=0.5; l.fogColor=[0.3,0.15,0.05]; l.fogDensity=0.004; }
   },
