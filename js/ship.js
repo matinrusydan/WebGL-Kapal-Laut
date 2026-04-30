@@ -116,8 +116,8 @@ export const Ship = {
     }
 
     // --- 5. EFFECTS ---
-    this.drawSph(0.3, 10, -5.1, 5.0, 20, [1,0.1,0,1], true); 
-    this.drawSph(0.3, 10,  5.1, 5.0, 20, [0,0.9,0.2,1], true); 
+    // this.drawSph(0.3, 10, -5.1, 5.0, 20, [1,0.1,0,1], true); // Port light (Red) dihapus
+    // this.drawSph(0.3, 10,  5.1, 5.0, 20, [0,0.9,0.2,1], true); // Starboard light (Green) dihapus
     this.drawSph(0.25,10,  0, 21.0, cabZ-1.0, [1,0.8,0.5, 0.5+Math.sin(State.simTime*2)*0.5], true);
 
     // Fake Blob Shadow di permukaan laut (Terpisah dari Root Kapal karena harus rata dengan laut)
