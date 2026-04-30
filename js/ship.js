@@ -6,11 +6,6 @@ import { Math3D } from './math.js';
 export const Ship = {
   // Matriks Induk untuk seluruh kapal
   rootMatrix: null,
-
-  // HELPER PENTING: Fix untuk "Gap" / Melayang pada Kontainer & Kabin.
-  // Implementasi matriks bawaan sebelumnya secara tidak sengaja melakukan perkalian (B * A).
-  // Fungsi mul() membalik argumen menjadi (A * B) untuk memastikan urutan operasi hierarki TRS
-  // (Translasi -> Rotasi -> Skala) berjalan searah dan objek menempel kuat pada rotasi Root.
   mul(a, b) {
     return Math3D.M4.multiply(b, a);
   },
@@ -27,11 +22,7 @@ export const Ship = {
     return m;
   },
 
-  // Menggabungkan Matriks Root (Kapal) dengan Offset Lokal (Part)
   getWorldMatrix(localMatrix) {
-    // Final = RootMatrix * LocalMatrix
-    // Local matrix akan menempatkan bagian-bagian (kargo/kabin) di atas dek kapal,
-    // lalu RootMatrix akan memiringkan & menaik-turunkan SELURUH bagian tersebut bersamaan.
     return this.mul(this.rootMatrix, localMatrix);
   },
 
@@ -58,7 +49,6 @@ export const Ship = {
     const C = Config.colors;
 
     // --- SETUP ROOT MATRIX (HIERARKI UTAMA KAPAL) ---
-    // Semua efek naik turun (y) dan oleng (pitch rx, roll rz) diterapkan secara universal di sini.
     this.rootMatrix = Math3D.M4.translation(0, State.ship.y, 0); 
     this.rootMatrix = this.mul(this.rootMatrix, Math3D.M4.rotationZ(State.ship.rz)); 
     this.rootMatrix = this.mul(this.rootMatrix, Math3D.M4.rotationX(State.ship.rx));

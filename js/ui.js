@@ -49,8 +49,10 @@ export const UI = {
       document.getElementById('panel-toggle').textContent = State.statusVisible ? '◀ HIDE' : '▶ SHOW'; 
     });
     
-    document.getElementById('btn-ai-log').addEventListener('click', () => AI.generateLog());
-    document.getElementById('btn-ai-close').addEventListener('click', () => document.getElementById('ai-panel').classList.remove('active'));
+    const btnAiLog = document.getElementById('btn-ai-log');
+    if (btnAiLog) btnAiLog.addEventListener('click', () => AI.generateLog());
+    const btnAiClose = document.getElementById('btn-ai-close');
+    if (btnAiClose) btnAiClose.addEventListener('click', () => document.getElementById('ai-panel').classList.remove('active'));
 
     // Camera Pointer Interaction
     WebGL.canvas.addEventListener('pointerdown', e => { State.input.isDown=true; State.input.lastPtr={x:e.clientX, y:e.clientY}; });
