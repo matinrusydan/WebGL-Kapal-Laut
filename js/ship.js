@@ -125,11 +125,13 @@ export const Ship = {
     shadowMat = this.mul(shadowMat, Math3D.M4.scaling(14, 0.01, 30));
     WebGL.drawFlat(WebGL.getSph(1, 16), shadowMat, [0, 0, 0, 0.5]);
     
-    // Bow Wave (Partikel buih haluan)
+    // Bow Wave 
+    /*
     const bowAlpha = 0.05 + Config.wind[State.windLevel].knots/60; 
     [-1,1].forEach(s => {
       const waveLocal = this.createLocalMatrix(s*4.5, -0.5, 29.5, 0, s*0.25, s*0.2, 1, 1, 1);
       WebGL.drawFlat(WebGL.getBox(0.8, 0.05, 7.0), this.getWorldMatrix(waveLocal), [1, 1, 1, bowAlpha]);
     });
+    */
   }
 };
