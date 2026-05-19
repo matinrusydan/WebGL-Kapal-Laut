@@ -45,7 +45,7 @@ export const UI = {
     document.getElementById('panel-toggle').addEventListener('click', () => { 
       State.statusVisible = !State.statusVisible; 
       document.getElementById('panel-status').classList.toggle('hidden', !State.statusVisible); 
-      document.getElementById('panel-toggle').textContent = State.statusVisible ? '◀ HIDE' : '▶ SHOW'; 
+      document.getElementById('panel-toggle').textContent = State.statusVisible ? '< HIDE' : '> SHOW'; 
     });
     
     const btnAiClose = document.getElementById('btn-ai-close');
@@ -88,15 +88,15 @@ export const UI = {
     document.getElementById('val-speed').textContent=wc.knots+' KN'; document.getElementById('bar-speed').style.width=(wc.knots/32*100)+'%';
     document.getElementById('val-vis').textContent=wc.vis+' NM'; document.getElementById('bar-vis').style.width=(wc.vis/10*100)+'%';
     
-    const icons={'11':'⛅','12':'🌤️','13':'☀️','21':'🌬️','22':'💨','23':'🌊','31':'🌧️','32':'⛈️','33':'🌀'};
-    document.getElementById('weather-label').textContent=(icons[State.windLevel+''+State.waveLevel]||'🌊')+' '+wc.name+'/'+wv.name;
+    const icons={'11':'CALM','12':'BREEZE','13':'SUN','21':'WIND','22':'GUST','23':'WAVE','31':'RAIN','32':'STORM','33':'CYCLONE'};
+    document.getElementById('weather-label').textContent=(icons[State.windLevel+''+State.waveLevel]||'SEA')+' '+wc.name+'/'+wv.name;
     document.getElementById('storm-alert').style.opacity=(State.windLevel===3&&State.waveLevel===3)?'1':'0';
   },
 
   updateDynamics(shipH) {
     const td=(State.ship.rz*180/Math.PI), pd=(State.ship.rx*180/Math.PI);
-    document.getElementById('val-tilt').textContent=Math.abs(td).toFixed(1)+'°'; document.getElementById('bar-tilt').style.width=Math.min(100,Math.abs(td)*7)+'%';
-    document.getElementById('val-pitch').textContent=Math.abs(pd).toFixed(1)+'°'; document.getElementById('bar-pitch').style.width=Math.min(100,Math.abs(pd)*12)+'%';
+    document.getElementById('val-tilt').textContent=Math.abs(td).toFixed(1)+' deg'; document.getElementById('bar-tilt').style.width=Math.min(100,Math.abs(td)*7)+'%';
+    document.getElementById('val-pitch').textContent=Math.abs(pd).toFixed(1)+' deg'; document.getElementById('bar-pitch').style.width=Math.min(100,Math.abs(pd)*12)+'%';
     document.getElementById('val-amp').textContent=Math.abs(shipH).toFixed(2); document.getElementById('bar-amp').style.width=Math.min(100,Math.abs(shipH)*40)+'%';
     document.getElementById('val-tilt').className='stat-val'+(Math.abs(td)>10?' danger':Math.abs(td)>5?' good':'');
     document.getElementById('compass-needle').setAttribute('transform',`rotate(${State.camera.tSph.theta*180/Math.PI},40,40)`);
